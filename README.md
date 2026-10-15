@@ -1,346 +1,529 @@
-# VectorDB — Build a Vector Database from Scratch in C++
+# VectorDB-From-Scratch
 
-A fully working **Vector Database** built from scratch in C++ with a web UI.  
-Implements **HNSW**, **KD-Tree**, and **Brute Force** search algorithms side-by-side, plus a **RAG pipeline** powered by a local LLM via Ollama.
+### A C++ Vector Database and Semantic Search Engine
 
-> Built as an educational project to show how production vector databases like Pinecone, Weaviate, and Chroma actually work under the hood.
+**VectorDB-From-Scratch** is a C++ project focused on vector storage, similarity search, and semantic retrieval. It demonstrates the fundamental concepts behind vector databases, including vector representations, similarity metrics, indexing strategies, and AI-powered retrieval using Ollama.
 
----
-
-## What This Project Does
-
-| Feature | Description |
-|---|---|
-| **3 Search Algorithms** | HNSW (production-grade), KD-Tree, Brute Force — run all three and compare speed |
-| **3 Distance Metrics** | Cosine similarity, Euclidean distance, Manhattan distance |
-| **16D Demo Vectors** | 20 pre-loaded semantic vectors across 4 categories (CS, Math, Food, Sports) |
-| **2D PCA Scatter Plot** | Live visualization of semantic space — watch clusters form |
-| **Real Document Embedding** | Paste any text → Ollama embeds it with `nomic-embed-text` (768D) |
-| **RAG Pipeline** | Ask questions about your documents → HNSW retrieves context → local LLM answers |
-| **Full REST API** | CRUD endpoints: insert, delete, search, benchmark, hnsw-info |
+The project includes a web-based interface for interacting with the database and exploring vector search functionality.
 
 ---
 
-## How It Works
+## 🚀 Project Overview
 
-```
-Your Text
-    │
-    ▼
-Ollama (nomic-embed-text)          ← converts text to a 768-dimensional vector
-    │
-    ▼
-HNSW Index (C++)                   ← indexes the vector in a multilayer graph
-    │
-    ▼
-Semantic Search                    ← finds nearest neighbors in vector space
-    │
-    ▼
-Ollama (llama3.2)                  ← reads retrieved chunks, generates an answer
-    │
-    ▼
-Answer
-```
+Traditional databases primarily retrieve information using exact values, keywords, or predefined conditions. Vector databases provide another approach by representing data as numerical vectors and comparing those vectors to identify similar items.
 
-**HNSW (Hierarchical Navigable Small World)** is the same algorithm used by Pinecone, Weaviate, Chroma, and Milvus. It builds a multilayer graph where each layer is progressively sparser — searches start at the top layer and zoom in, achieving O(log N) complexity instead of O(N) for brute force.
+This project explores how a vector database can be implemented using C++.
 
----
+The application aims to demonstrate:
 
-## Prerequisites
+* Storing and retrieving vector representations.
+* Searching for similar vectors using distance metrics.
+* Exploring different vector search and indexing approaches.
+* Connecting vector search with AI embedding models.
+* Providing a web interface for interacting with the system.
 
-You need **3 things** installed on your Windows laptop:
+The project is also a practical introduction to concepts used in semantic search and Retrieval-Augmented Generation (RAG).
 
-1. **MSYS2** (gives you g++ compiler)
-2. **Git**
-3. **Ollama** (runs the local AI models)
+## ✨ Features
 
----
+### 1. Vector Storage and Retrieval
 
-## Step-by-Step Setup (Windows)
+Store numerical vector representations and retrieve relevant information through similarity-based searches.
 
-### Step 1 — Install MSYS2 (C++ Compiler)
+### 2. Similarity Search
 
-1. Go to **https://www.msys2.org** and download the installer
-2. Run the installer, keep default path (`C:\msys64`)
-3. After install, open **MSYS2 UCRT64** from Start Menu (the orange icon)
-4. Run these commands inside the MSYS2 terminal:
+Compare vectors using distance or similarity measures, such as:
 
-```bash
-pacman -Syu
-```
-*(Close and reopen the terminal if it asks you to)*
+* Cosine similarity
+* Euclidean distance
+* Manhattan distance
 
-```bash
-pacman -S mingw-w64-ucrt-x86_64-gcc
-```
+The availability of each metric depends on its implementation in the source code.
 
-5. Add g++ to your Windows PATH:
-   - Press `Win + R`, type `sysdm.cpl`, press Enter
-   - Click **Advanced** → **Environment Variables**
-   - Under **System variables**, find **Path**, click **Edit**
-   - Click **New** and add: `C:\msys64\ucrt64\bin`
-   - Click OK on all windows
-   - **Open a new PowerShell** and verify:
-   ```
-   g++ --version
-   ```
-   You should see something like `g++ (GCC) 15.x.x`
+### 3. Vector Search Algorithms
+
+Explore different approaches to finding similar vectors, including:
+
+* Brute-force search
+* KD-Tree-based search
+* Hierarchical Navigable Small World (HNSW) indexing
+
+**Note:** Include only the algorithms that are implemented and working in the current source code.
+
+### 4. Web-Based Interface
+
+Interact with the application through a browser-based interface served by the C++ backend.
+
+### 5. AI Embedding Integration
+
+Integrate with Ollama-compatible embedding models to convert text into vector representations, if supported by the configured application workflow.
+
+### 6. Semantic Search
+
+Use vector similarity to retrieve content based on semantic relationships rather than relying exclusively on exact keyword matches.
+
+### 7. RAG Exploration
+
+Explore how retrieved information can provide context to a language model when generating responses, provided the relevant retrieval and generation components are configured.
 
 ---
 
-### Step 2 — Install Git
+## 🛠️ Tech Stack
 
-1. Go to **https://git-scm.com/download/win** and download Git for Windows
-2. Run the installer with default settings
-3. Verify in PowerShell:
+| Technology          | Purpose                                           |
+| ------------------- | ------------------------------------------------- |
+| C++                 | Core application and vector-search implementation |
+| HTML                | Web interface structure                           |
+| HTTP server library | Handling HTTP requests from the browser           |
+| Ollama              | Local AI model integration                        |
+| Embedding models    | Converting text into vector representations       |
+| Git and GitHub      | Version control and project hosting               |
+| VS Code             | Development environment                           |
+
+**Important:** The technologies above describe the project's intended components. Verify each dependency against the actual source code and configuration before presenting it as a confirmed implementation.
+
+---
+
+## 🏗️ System Architecture
+
+The application can be understood through the following high-level architecture:
+
+```text
+                ┌────────────────────────┐
+                │       User             │
+                └───────────┬────────────┘
+                            │
+                            ▼
+                ┌────────────────────────┐
+                │   Web-Based Interface  │
+                │        HTML            │
+                └───────────┬────────────┘
+                            │ HTTP Requests
+                            ▼
+                ┌────────────────────────┐
+                │      C++ Backend       │
+                │                        │
+                │ Request Handling       │
+                │ Vector Operations      │
+                │ Search Processing      │
+                └───────────┬────────────┘
+                            │
+                            ▼
+                ┌────────────────────────┐
+                │    Vector Database     │
+                │                        │
+                │ Vector Storage         │
+                │ Similarity Calculation │
+                │ Search / Indexing      │
+                └───────────┬────────────┘
+                            │
+                            ▼
+                ┌────────────────────────┐
+                │   Search Results       │
+                └────────────────────────┘
+
+              Optional AI Integration
+                            │
+                            ▼
+                ┌────────────────────────┐
+                │        Ollama          │
+                │ Embedding / LLM Models │
+                └────────────────────────┘
 ```
+
+*This is a conceptual architecture. The exact request flow and component boundaries depend on the implementation in `main.cpp` and `index.html`.*
+
+---
+
+## 🔄 Application Workflow
+
+The expected workflow for vector search is:
+
+1. **Start the backend:** Compile and launch the C++ application.
+2. **Open the interface:** Visit the local server in a browser.
+3. **Provide input:** Enter a query or supply data using the functionality supported by the interface.
+4. **Generate embeddings:** If configured, use an embedding model to convert text into vectors.
+5. **Search the database:** Compare the query vector with stored vectors.
+6. **Rank results:** Order matching items according to the implemented similarity or distance measure.
+7. **Display results:** Return the results to the web interface.
+8. **Generate a response:** If RAG is implemented and enabled, provide retrieved context to a language model.
+
+Not every step is necessarily automated in the current version. The actual workflow should be confirmed against the implementation.
+
+---
+
+## 📂 Project Structure
+
+The repository contains the following core files:
+
+```text
+VectorDB-From-Scratch/
+│
+├── main.cpp       # C++ application and backend logic
+├── httplib.h      # HTTP server/client library header
+├── index.html     # Browser-based user interface
+├── README.md      # Project documentation
+└── .gitignore     # Git ignore rules
+```
+
+Additional files may be present depending on the current repository version.
+
+---
+
+## 💻 Prerequisites
+
+Before running the project, install the following tools:
+
+### 1. Visual Studio Code
+
+Use VS Code to open, edit, compile, and run the project.
+
+Official website: https://code.visualstudio.com/
+
+### 2. C++ Compiler
+
+A C++17-compatible compiler is required.
+
+On Windows, you can install GCC through MSYS2.
+
+Official website: https://www.msys2.org/
+
+After installing the appropriate GCC toolchain, ensure that the compiler's `bin` directory is added to your Windows `PATH`.
+
+For an MSYS2 UCRT64 installation, the typical directory is:
+
+```text
+C:\msys64\ucrt64\bin
+```
+
+Verify the installation in the VS Code terminal:
+
+```powershell
+g++ --version
+```
+
+### 3. Git
+
+Git is required to clone and manage the repository.
+
+Official website: https://git-scm.com/
+
+Verify the installation:
+
+```powershell
 git --version
 ```
 
+### 4. Ollama (Optional)
+
+Install Ollama if the application's embedding or language-model functionality requires it.
+
+Official website: https://ollama.com/
+
 ---
 
-### Step 3 — Install Ollama (Local AI Models)
+## ⚙️ Installation and Setup
 
-1. Go to **https://ollama.com** and click **Download for Windows**
-2. Run the installer
-3. Ollama starts automatically in the system tray
-4. Open **PowerShell** and pull the two required models:
+### Step 1: Clone the Repository
+
+Open the VS Code terminal or PowerShell and run:
+
+```powershell
+git clone https://github.com/karanAI01/VectorDB-From-Scratch.git
+```
+
+### Step 2: Navigate to the Project Directory
+
+```powershell
+cd VectorDB-From-Scratch
+```
+
+### Step 3: Open the Project in VS Code
+
+If VS Code's command-line launcher is available, run:
+
+```powershell
+code .
+```
+
+Alternatively, open VS Code manually and select the cloned project folder.
+
+### Step 4: Verify the Project Files
+
+Run:
+
+```powershell
+dir
+```
+
+Confirm that the source files, including `main.cpp` and `index.html`, are present.
+
+---
+
+## ▶️ Build and Run
+
+### Step 1: Open the Terminal
+
+In VS Code, select:
+
+**Terminal → New Terminal**
+
+Make sure the terminal is inside the project directory.
+
+### Step 2: Compile the C++ Application
+
+For a Windows GCC toolchain, try:
+
+```powershell
+g++ -std=c++17 -O2 main.cpp -o db.exe -lws2_32
+```
+
+This command:
+
+* `g++` invokes the GNU C++ compiler.
+* `-std=c++17` enables the C++17 language standard.
+* `-O2` enables compiler optimizations.
+* `main.cpp` specifies the source file.
+* `-o db.exe` names the generated executable.
+* `-lws2_32` links the Windows Sockets library.
+
+**Troubleshooting:** This command assumes that the source code uses Windows networking and does not require additional libraries. If compilation fails, inspect the compiler error and the networking implementation before changing the command.
+
+### Step 3: Run the Application
+
+After successful compilation, execute:
+
+```powershell
+.\db.exe
+```
+
+### Step 4: Open the Web Interface
+
+If the application starts its HTTP server on port `8080`, open:
+
+http://localhost:8080
+
+Use the actual port printed by the application if it differs.
+
+### Step 5: Test the Application
+
+Try the available actions in the interface. Follow the input format and functionality implemented by the current version of the project.
+
+---
+
+## 🤖 Ollama Integration
+
+Ollama can run supported language and embedding models locally.
+
+Official website: https://ollama.com/
+
+### Step 1: Install Ollama
+
+Download and install Ollama for your operating system.
+
+### Step 2: Download an Embedding Model
+
+If the application is configured to use `nomic-embed-text`, run:
 
 ```powershell
 ollama pull nomic-embed-text
 ```
-*(~274 MB — this is the embedding model)*
+
+### Step 3: Download a Language Model
+
+If the application uses `llama3.2` for text generation, run:
 
 ```powershell
 ollama pull llama3.2
 ```
-*(~2 GB — this is the language model)*
 
-5. Verify Ollama is running:
+### Step 4: Verify the Models
+
+Run:
+
 ```powershell
 ollama list
 ```
-You should see both models listed.
 
-> **Minimum specs for Ollama:** 8GB RAM recommended. The models will use ~3GB total.
+Check that the required models appear in the list.
 
----
+### Step 5: Start the Application
 
-### Step 4 — Clone the Repository
+Start the C++ application and test the AI-related features supported by its implementation.
 
-Open **PowerShell** and run:
-
-```powershell
-git clone https://github.com/YOUR_USERNAME/VectorDB.git
-cd VectorDB
-```
-
-*(Replace `YOUR_USERNAME` with the actual GitHub username)*
+**Important:** Downloading a model does not automatically integrate it with the application. The C++ backend must send requests to Ollama using the correct endpoint, model name, and request format. Verify these details in `main.cpp`.
 
 ---
 
-### Step 5 — Compile the C++ Server
+## 🔌 API Documentation
 
-Inside the `VectorDB` folder, run:
+The C++ backend may expose HTTP endpoints for interacting with the database and web interface.
 
-```powershell
-g++ -std=c++17 -O2 main.cpp -o db -lws2_32
+Before documenting individual endpoints, inspect the route definitions in `main.cpp`. The method, path, request body, and response format must match the actual implementation.
+
+Use the following table as a documentation template:
+
+| Method | Endpoint               | Purpose                            |
+| ------ | ---------------------- | ---------------------------------- |
+| GET    | Verify from `main.cpp` | Describe the implemented operation |
+| POST   | Verify from `main.cpp` | Describe the implemented operation |
+| GET    | Verify from `main.cpp` | Describe the implemented operation |
+
+### Example API Documentation Format
+
+Once you confirm an endpoint in the source code, document it like this:
+
+```http
+POST /your-actual-endpoint
+Content-Type: application/json
 ```
 
-This produces `db.exe`. It takes about 10–20 seconds.
+Example request body:
 
-> **Troubleshooting:**
-> - `g++: command not found` → MSYS2 not in PATH, redo Step 1 point 5
-> - `undefined reference to WSA...` → missing `-lws2_32` flag, add it
-> - Takes too long? Remove `-O2` for faster (but slower executable) compile
+```json
+{
+  "query": "your search query"
+}
+```
+
+Example response:
+
+```json
+{
+  "results": []
+}
+```
+
+**These request and response examples are illustrative only.** Replace them with the actual endpoint, JSON fields, and response format implemented in the project. Do not publish placeholder endpoints as working APIs.
 
 ---
 
-### Step 6 — Run Everything
+## 📸 Screenshots
 
-**Terminal 1** — Start Ollama (if not already running):
-```powershell
-ollama serve
-```
-*(If Ollama is already in the system tray, skip this)*
+Screenshots help visitors understand the application without running it locally.
 
-**Terminal 2** — Start the VectorDB server:
-```powershell
-./db
+Create a `screenshots` folder in the repository and add images of the running application.
+
+Suggested screenshots:
+
+1. Main application interface.
+2. Vector search input and results.
+3. Similarity-search output.
+4. AI or RAG response, if implemented.
+5. Terminal showing successful compilation and startup.
+
+### Adding Screenshots to GitHub
+
+1. Open your repository on GitHub.
+2. Select **Add file → Create new file**.
+3. Enter `screenshots/.gitkeep` as the filename if you need to create the folder first.
+4. Commit the file.
+5. Upload your actual screenshots into the `screenshots` folder using **Add file → Upload files**.
+
+After uploading an image, reference its repository path in your README.
+
+Example:
+
+```markdown
+## Application Interface
+
+![Application Interface](screenshots/home.png)
 ```
 
-You should see:
-```
-=== VectorDB Engine ===
-http://localhost:8080
-20 demo vectors | 16 dims | HNSW+KD-Tree+BruteForce
-Ollama: ONLINE
-  embed model: nomic-embed-text  gen model: llama3.2
-```
-
-**Open your browser** and go to:
-```
-http://localhost:8080
-```
+Replace `home.png` with the actual screenshot filename.
 
 ---
 
-## Using the Application
+## 🎯 Use Cases
 
-### Tab 1: Search (Demo Vectors)
+Vector databases and similarity-search systems are useful in a variety of applications:
 
-- Type any concept in the search box: `binary tree`, `sushi`, `basketball`, `calculus`
-- Choose your algorithm: **HNSW**, **KD-Tree**, or **Brute Force**
-- Choose distance metric: **Cosine**, **Euclidean**, or **Manhattan**
-- Click **⚡ SEARCH** — results appear with distances, the matching point glows on the scatter plot
-- Click **▶ COMPARE ALL ALGOS** to run all 3 algorithms and compare their speed
+* **Semantic Search:** Retrieve information based on meaning rather than exact keyword matches.
+* **Document Retrieval:** Find documents similar to a user's query.
+* **Recommendation Systems:** Identify items with similar vector representations.
+* **AI Applications:** Supply relevant information to language models.
+* **RAG Systems:** Retrieve relevant context before generating an AI response.
+* **Learning and Experimentation:** Understand vector representations, distance metrics, and indexing techniques.
 
-**The scatter plot** shows all 20 vectors projected to 2D using PCA. Notice how the 4 semantic categories (CS, Math, Food, Sports) form distinct clusters — this is what "semantic similarity" looks like visually.
-
-### Tab 2: Documents (Real Embeddings)
-
-This uses Ollama to generate **real 768-dimensional embeddings** from any text.
-
-1. Type a title (e.g., `Operating Systems Notes`)
-2. Paste any text — lecture notes, textbook paragraphs, Wikipedia articles
-3. Click **⚡ EMBED & INSERT**
-4. Long documents are automatically split into overlapping 250-word chunks
-5. Each chunk gets its own embedding and is stored in a separate HNSW index
-
-### Tab 3: Ask AI (RAG Pipeline)
-
-1. Make sure you have inserted some documents in Tab 2 first
-2. Type a question about your documents
-3. Click **🤖 ASK AI**
-
-What happens behind the scenes:
-```
-1. Your question → embedded with nomic-embed-text (768D vector)
-2. HNSW search → finds 3 most semantically similar chunks
-3. Retrieved chunks → sent as context to llama3.2
-4. llama3.2 → generates an answer based only on your documents
-```
-
-The answer streams in with a typewriter effect. Click the **context chips** to see exactly which chunks the AI used.
+These are potential applications of the concepts explored in this project, not a claim that every use case is fully implemented.
 
 ---
 
-## REST API Reference
+## 🔮 Future Improvements
 
-The server exposes a full REST API at `http://localhost:8080`.
+Potential enhancements include:
 
-### Demo Vector Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/search?v=f1,f2,...&k=5&metric=cosine&algo=hnsw` | K-NN search |
-| `POST` | `/insert` | Insert a demo vector |
-| `DELETE` | `/delete/:id` | Delete by ID |
-| `GET` | `/items` | List all demo vectors |
-| `GET` | `/benchmark?v=...&k=5&metric=cosine` | Compare all 3 algorithms |
-| `GET` | `/hnsw-info` | HNSW graph structure and layer stats |
-| `GET` | `/stats` | Database statistics |
-
-### Document & RAG Endpoints
-
-| Method | Endpoint | Body | Description |
-|---|---|---|---|
-| `POST` | `/doc/insert` | `{"title":"...","text":"..."}` | Embed and store document |
-| `GET` | `/doc/list` | — | List all stored documents |
-| `DELETE` | `/doc/delete/:id` | — | Delete document chunk |
-| `POST` | `/doc/ask` | `{"question":"...","k":3}` | RAG: retrieve + generate |
-| `GET` | `/status` | — | Ollama status and model info |
-
-### Example: Search via curl
-
-```powershell
-curl "http://localhost:8080/search?v=0.9,0.8,0.7,0.6,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1&k=3&metric=cosine&algo=hnsw"
-```
-
-### Example: Ask a question via curl
-
-```powershell
-curl -X POST http://localhost:8080/doc/ask `
-  -H "Content-Type: application/json" `
-  -d '{"question":"What is dynamic programming?","k":3}'
-```
+* [ ] Add persistent vector storage.
+* [ ] Improve error handling and input validation.
+* [ ] Add automated unit and integration tests.
+* [ ] Benchmark search performance across different algorithms.
+* [ ] Add support for larger vector datasets.
+* [ ] Improve indexing and nearest-neighbor search performance.
+* [ ] Expand the web interface with search history and result details.
+* [ ] Add configurable embedding models.
+* [ ] Improve RAG retrieval and response quality.
+* [ ] Add Docker support for easier deployment.
+* [ ] Add continuous integration and automated builds.
+* [ ] Publish complete API documentation based on the implemented routes.
 
 ---
 
-## Project Structure
+## 📚 Learning Outcomes
 
-```
-VectorDB/
-├── main.cpp        ← C++ backend (HNSW, KD-Tree, BruteForce, REST API, RAG)
-├── httplib.h       ← Single-header HTTP server library (cpp-httplib)
-├── index.html      ← Frontend (PCA scatter plot, chat UI, benchmark)
-└── README.md       ← This file
-```
+This project provides an opportunity to explore:
 
-### Architecture (main.cpp)
+* C++ application development.
+* Vector representations and similarity calculations.
+* Nearest-neighbor search concepts.
+* Data structures and indexing strategies.
+* HTTP communication between a frontend and backend.
+* Local AI model integration.
+* Embedding-based semantic retrieval.
+* The fundamentals of Retrieval-Augmented Generation.
+* Git and GitHub project management.
 
-```
-BruteForce          O(N·d)      Exact, baseline
-KDTree              O(log N)    Exact, axis-aligned partitioning
-HNSW                O(log N)    Approximate, multilayer small-world graph
+---
 
-VectorDB            Unified interface over all 3 (16D demo vectors)
-DocumentDB          HNSW-only index for real Ollama embeddings (768D)
-OllamaClient        HTTP client → /api/embeddings + /api/generate
+## 🤝 Contributing
+
+Contributions, suggestions, and bug reports are welcome.
+
+To contribute:
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make your changes.
+4. Test your changes locally.
+5. Commit your work.
+6. Open a pull request describing the changes.
+
+Example:
+
+```bash
+git checkout -b feature/your-feature
+git add .
+git commit -m "Add your feature"
+git push origin feature/your-feature
 ```
 
 ---
 
-## Algorithm Deep Dive
+## 📄 License
 
-### HNSW (Hierarchical Navigable Small World)
+No license is specified in this README.
 
-Nodes are inserted into a multilayer graph. Each node randomly gets assigned a maximum layer. Layer 0 has all nodes with many connections; higher layers have fewer nodes (exponentially fewer) with longer-range connections.
-
-**Insert:** Start at the top layer, greedily find the nearest node, drop a layer, repeat. At each layer from your assigned max down to 0, run a beam search (ef_construction=200) and connect to the M nearest neighbors bidirectionally.
-
-**Search:** Same greedy descent from top layer. At layer 0, expand to ef nearest candidates using a priority queue.
-
-**Why it's fast:** The upper layers act like a highway — you quickly get to the right neighborhood, then zoom in at layer 0.
-
-### KD-Tree (K-Dimensional Tree)
-
-Binary space partitioning. Each node splits space along one dimension (cycling through all dimensions). Search prunes entire subtrees when the closest possible point in that subtree can't beat the current best — the "ball within hyperslab" check.
-
-**Weakness:** Degrades with high dimensions (curse of dimensionality). Works well for ≤20D, becomes close to brute force at 768D.
-
-### Why HNSW Wins at High Dimensions
-
-KD-Tree pruning relies on axis-aligned distance bounds. In high dimensions, almost all the space is near the boundary of the hypersphere — no subtrees get pruned. HNSW's graph-based approach doesn't have this problem.
+If you want others to reuse, modify, or distribute your code under defined terms, add an appropriate license file to the repository and update this section.
 
 ---
 
-## Common Issues
+## 👨‍💻 Author
 
-| Problem | Fix |
-|---|---|
-| `Ollama: OFFLINE` in header | Run `ollama serve` in a terminal |
-| Embedding takes forever | Ollama is downloading the model on first use, wait 2 min |
-| `g++: command not found` | Add `C:\msys64\ucrt64\bin` to Windows PATH |
-| Port 8080 already in use | Kill the process: `netstat -ano \| findstr 8080` then `taskkill /PID <pid> /F` |
-| LLM answer is slow | Normal — llama3.2 takes 10–30s on a laptop CPU. Use llama3.2:1b for faster answers |
+**Karan Verma**
 
-### Use a Smaller/Faster LLM
+GitHub: https://github.com/karanAI01
 
-If llama3.2 is too slow on your laptop, switch to the 1B model:
-
-```powershell
-ollama pull llama3.2:1b
-```
-
-Then edit [main.cpp](main.cpp) line where `genModel` is set:
-```cpp
-std::string genModel = "llama3.2:1b";   // change this
-```
-Recompile and restart.
+**Repository:** https://github.com/karanAI01/VectorDB-From-Scratch
 
 ---
 
-## License
-
-MIT — use this however you want.
+⭐ If you find this project useful, consider starring the repository!
