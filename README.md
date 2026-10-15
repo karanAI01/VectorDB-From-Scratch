@@ -400,29 +400,7 @@ Example response:
 
 ## 📸 Screenshots
 
-Screenshots help visitors understand the application without running it locally.
-
-Create a `screenshots` folder in the repository and add images of the running application.
-
-Suggested screenshots:
-
-1. Main application interface.
-2. Vector search input and results.
-3. Similarity-search output.
-4. AI or RAG response, if implemented.
-5. Terminal showing successful compilation and startup.
-
-Example:
-
-```markdown
-## Application Interface
-
-![Application Interface](https://github.com/karanAI01/VectorDB-From-Scratch/blob/main/home.png)
-```
-
-Replace `home.png` with the actual screenshot filename.
-
----
+![Home Page](https://github.com/karanAI01/VectorDB-From-Scratch/blob/main/home.png)
 
 ## 🎯 Use Cases
 
