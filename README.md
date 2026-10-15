@@ -412,22 +412,12 @@ Suggested screenshots:
 4. AI or RAG response, if implemented.
 5. Terminal showing successful compilation and startup.
 
-### Adding Screenshots to GitHub
-
-1. Open your repository on GitHub.
-2. Select **Add file → Create new file**.
-3. Enter `screenshots/.gitkeep` as the filename if you need to create the folder first.
-4. Commit the file.
-5. Upload your actual screenshots into the `screenshots` folder using **Add file → Upload files**.
-
-After uploading an image, reference its repository path in your README.
-
 Example:
 
 ```markdown
 ## Application Interface
 
-![Application Interface](screenshots/home.png)
+![Application Interface](screenshot/home.png)
 ```
 
 Replace `home.png` with the actual screenshot filename.
