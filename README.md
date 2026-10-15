@@ -417,7 +417,7 @@ Example:
 ```markdown
 ## Application Interface
 
-![Application Interface](screenshot/home.png)
+![Application Interface](https://github.com/karanAI01/VectorDB-From-Scratch/blob/main/home.png)
 ```
 
 Replace `home.png` with the actual screenshot filename.
